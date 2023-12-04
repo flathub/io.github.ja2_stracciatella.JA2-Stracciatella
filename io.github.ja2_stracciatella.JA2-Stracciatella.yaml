@@ -115,7 +115,7 @@ modules:
         sha256: "1c15b4f281bba9aff1c3409d4308d22840eb815a8a3ab53f7be69a5841f300a2"
       # Cargo sources, generated with
       #
-      #   python3 flatpak-cargo-generator.py JA2_CHECKOUT/rust/Cargo.lock -o cargo-sources.json
+      #   python3 flatpak-cargo-generator.py ${JA2_CLONE}/rust/Cargo.lock -o cargo-sources.json
       #
       # See https://github.com/flatpak/flatpak-builder-tools/tree/master/cargo
       # for details.
