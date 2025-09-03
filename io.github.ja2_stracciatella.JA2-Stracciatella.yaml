@@ -37,9 +37,10 @@ modules:
       - "-DST_BUILD_TESTS=OFF"
       - "-Wno-dev"
     sources:
-      - type: archive
-        url: https://github.com/zrax/string_theory/archive/refs/tags/3.8.tar.gz
-        sha256: 9aaee95b7a9166cd37fd28a3cdb4e5d6dc491c2496fd33be82f44b59987fd753
+      - type: git
+        url: https://github.com/zrax/string_theory.git
+        tag: "3.9"
+        commit: "42e68a9709936ab379eac4dd6ba53deb2b322e03"
     cleanup:
       - /include
       - /share/doc
