@@ -1,6 +1,6 @@
 app-id: io.github.ja2_stracciatella.JA2-Stracciatella
 runtime: org.freedesktop.Platform
-runtime-version: "23.08"
+runtime-version: "25.08"
 sdk: org.freedesktop.Sdk
 sdk-extensions:
   - "org.freedesktop.Sdk.Extension.rust-stable"
@@ -9,18 +9,7 @@ rename-desktop-file: ja2-stracciatella.desktop
 rename-icon: ja2-stracciatella
 finish-args:
   - "--share=network"
-  # We use both x11 and wayland, because either x11 or x11-fallback + wayland have some flaws
-  # in a wayland environment:
-  #
-  # Under x11-fallback + wayland the launcher will not work at all in a wayland environment,
-  # because the underlying fltk toolkit does not yet support wayland.  Wayland is planned for
-  # fltk 1.4 (see https://github.com/fltk/fltk/issues/380), but as of 2023-12 that's not yet
-  # released.
-  #
-  # Under x11 only the game doesn't respect the display scale in a wayland environment, i.e.
-  # runs unscaled on a 2x-scaled 4k screen, which, given that the game assets are from the 90s,
-  # is so tiny as to be unplayable.
-  - "--socket=x11"
+  - "--socket=fallback-x11"
   - "--socket=wayland"
   - "--share=ipc"
   - "--device=dri"
@@ -37,37 +26,11 @@ modules:
       - "-DST_BUILD_TESTS=OFF"
       - "-Wno-dev"
     sources:
-      - type: archive
-        url: https://github.com/zrax/string_theory/archive/refs/tags/3.8.tar.gz
-        sha256: 9aaee95b7a9166cd37fd28a3cdb4e5d6dc491c2496fd33be82f44b59987fd753
-    cleanup:
-      - /include
-      - /share/doc
-      - /lib/cmake
-      - /lib/pkgconfig
-  - name: fltk
-    buildsystem: cmake-ninja
-    config-opts:
-      - "-DOPTION_BUILD_SHARED_LIBS=ON"
-      - "-DOPTION_BUILD_HTML_DOCUMENTATION=OFF"
-      - "-Wno-dev"
-    sources:
-      - type: archive
-        url: https://github.com/fltk/fltk/archive/release-1.3.8.tar.gz
-        sha512: 197848d3b80a65cca936daf4f0b74609f0fe8332a4cd11af53385fb2aa45ad698b1e239a48732b118cd3cb189bc531711b72fb2eeeb85be887dc6c5a558fa4b3
-    cleanup:
-      - /bin/fluid
-      - /bin/fltk-config
-      - /include
-      - /man
-      - /share/doc
-      - /share/man
-      - /share/applications
-      - /share/icons
-      - /share/mime
-      - /share/fltk
-      - /lib/pkgconfig
-      - /lib/*.a
+      - type: git
+        url: https://github.com/zrax/string_theory.git
+        tag: "3.9"
+        commit: "42e68a9709936ab379eac4dd6ba53deb2b322e03"
+    cleanup: ["*"] # header-only library, we need not retain anything
   - shared-modules/lua5.3/lua-5.3.5.json
   - name: sol2
     buildsystem: cmake-ninja
@@ -78,14 +41,48 @@ modules:
       - "-DSOL2_TESTS_EXAMPLES=OFF"
       - "-Wno-dev"
     sources:
-      - type: archive
-        url: "https://github.com/ThePhD/sol2/archive/refs/tags/v3.2.2.tar.gz"
-        sha256: "141790dae0c1821dd2dbac3595433de49ba72545845efc3ec7d88de8b0a3b2da"
+      - type: git
+        url: "https://github.com/ThePhD/sol2.git"
+        tag: v3.2.2
+        commit: "288f4f4e73f379cca56f8eb7840a449adac0acb9"
+      # See https://github.com/ThePhD/sol2/issues/1695
+      #
+      # JA2 doesn't build against sol 3.3.0 or newer, so we have to backport this
+      # fix from sol 3.5.0, see https://github.com/ThePhD/sol2/commit/d805d027e0a0a7222e936926139f06e23828ce9f
+      - type: patch
+        path: 0001-Fix-emplace.patch
+    cleanup: ["*"] # header-only library, we need not retain anything
+  # FLTK needs glu for its wayland backend
+  - shared-modules/glu/glu-9.json
+  - name: fltk
+    buildsystem: cmake-ninja
+    config-opts:
+      - "-DFLTK_USE_WAYLAND=ON" # Make sure we get wayland support
+      - "-DFLTK_BUILD_FLUID=ON" # JA2 needs fluid to find Fltk
+      - "-DFLTK_BUILD_SHARED_LIBS=ON"
+      - "-DFLTK_BUILD_HTML_DOCS=OFF"
+      - "-DFLTK_BUILD_PDF_DOCS=OFF"
+      - "-DFLTK_BUILD_TEST=OFF"
+      - "-DFLTK_BUILD_EXAMPLES=OFF"
+      - "-DFLTK_BUILD_FLTK_OPTIONS=OFF"
+      - "-Wno-dev"
+    sources:
+      - type: git
+        url: https://github.com/fltk/fltk.git
+        tag: "release-1.4.4"
+        commit: "9c70ea95a176933ffd575022d145c284d1fc9ef7"
     cleanup:
-      - "/include"
-      - "/share/doc"
-      - "/share/pkgconfig"
-      - "/lib/cmake"
+      - /bin/
+      - /include
+      - /man
+      - /share/doc
+      - /share/man
+      - /share/applications
+      - /share/icons
+      - /share/mime
+      - /share/fltk
+      - /lib/pkgconfig
+      - /lib/*.a
   - name: ja2-stracciatella
     buildsystem: cmake-ninja
     build-options:
@@ -98,7 +95,6 @@ modules:
       - "-DEXTRA_DATA_DIR=/app/share/ja2"
       - "-DLOCAL_LUA_LIB=OFF"
       - "-DLOCAL_SOL_LIB=OFF"
-      - "-DLOCAL_RAPIDJSON_LIB=OFF"
       - "-DLOCAL_STRING_THEORY_LIB=OFF"
       - "-DLOCAL_MINIAUDIO_LIB=OFF"
       - "-DMINIAUDIO_INCLUDE_DIR=/run/build/ja2-stracciatella/dependencies/lib-miniaudio/src"
