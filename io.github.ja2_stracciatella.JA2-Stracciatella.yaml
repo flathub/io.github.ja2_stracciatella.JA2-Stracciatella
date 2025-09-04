@@ -41,11 +41,7 @@ modules:
         url: https://github.com/zrax/string_theory.git
         tag: "3.9"
         commit: "42e68a9709936ab379eac4dd6ba53deb2b322e03"
-    cleanup:
-      - /include
-      - /share/doc
-      - /lib/cmake
-      - /lib/pkgconfig
+    cleanup: ["*"] # header-only library, we need not retain anything
   # FLTK needs glu for its wayland backend
   - shared-modules/glu/glu-9.json
   - name: fltk
@@ -97,11 +93,7 @@ modules:
       # fix from sol 3.5.0, see https://github.com/ThePhD/sol2/commit/d805d027e0a0a7222e936926139f06e23828ce9f
       - type: patch
         path: 0001-Fix-emplace.patch
-    cleanup:
-      - "/include"
-      - "/share/doc"
-      - "/share/pkgconfig"
-      - "/lib/cmake"
+    cleanup: ["*"] # header-only library, we need not retain anything
   - name: ja2-stracciatella
     buildsystem: cmake-ninja
     build-options:
