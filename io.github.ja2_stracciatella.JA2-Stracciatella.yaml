@@ -107,7 +107,6 @@ modules:
       - "-DEXTRA_DATA_DIR=/app/share/ja2"
       - "-DLOCAL_LUA_LIB=OFF"
       - "-DLOCAL_SOL_LIB=OFF"
-      - "-DLOCAL_RAPIDJSON_LIB=OFF"
       - "-DLOCAL_STRING_THEORY_LIB=OFF"
       - "-DLOCAL_MINIAUDIO_LIB=OFF"
       - "-DMINIAUDIO_INCLUDE_DIR=/run/build/ja2-stracciatella/dependencies/lib-miniaudio/src"
