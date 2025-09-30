@@ -12,9 +12,7 @@ A [flatpak][] manifest for [JA2 Stracciatella][ja2].
 3. Bump dependent modules when required, by updating the source URL for dependency modules (`sol2`, `fltk`, `string_theory`, etc.).
 4. Update Cargo dependencies:
 
-    1. Clone JA2 and switch to the tag corresponding to the version.
-    2. Get the [flatpak builder tools](https://github.com/flatpak/flatpak-builder-tools/tree/master/cargo).
-    2. Run `python3 flatpak-cargo-generator.py ${JA2_CLONE}/rust/Cargo.lock -o cargo-sources.json`
+   1. Clone JA2 and switch to the tag corresponding to the version.
+   2. Run `flatpak run --command=flatpak-cargo-generator org.flatpak.Builder ${JA2_CLONE}/rust/Cargo.lock -o cargo-sources.json`
 
 5. Commit everything into a new branch and make a merge request.
-

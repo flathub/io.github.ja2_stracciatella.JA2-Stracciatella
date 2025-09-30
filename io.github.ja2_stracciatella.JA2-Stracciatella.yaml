@@ -43,14 +43,11 @@ modules:
     sources:
       - type: git
         url: "https://github.com/ThePhD/sol2.git"
-        tag: v3.2.2
-        commit: "288f4f4e73f379cca56f8eb7840a449adac0acb9"
-      # See https://github.com/ThePhD/sol2/issues/1695
-      #
-      # JA2 doesn't build against sol 3.3.0 or newer, so we have to backport this
-      # fix from sol 3.5.0, see https://github.com/ThePhD/sol2/commit/d805d027e0a0a7222e936926139f06e23828ce9f
+        tag: v3.5.0
+        commit: "9190880c593dfb018ccf5cc9729ab87739709862"
+      # Fix build with GCC 15, see https://github.com/ThePhD/sol2/pull/1676
       - type: patch
-        path: 0001-Fix-emplace.patch
+        path: pr-1676.patch
     cleanup: ["*"] # header-only library, we need not retain anything
   # FLTK needs glu for its wayland backend
   - shared-modules/glu/glu-9.json
@@ -106,12 +103,13 @@ modules:
       - install -Dm755 ja2-launcher-wrapper /app/bin/ja2-launcher-wrapper
       - install -Dm644 io.github.ja2_stracciatella.JA2-Stracciatella.appdata.xml "${FLATPAK_DEST}/share/metainfo/io.github.ja2_stracciatella.JA2-Stracciatella.metainfo.xml"
     sources:
-      - type: archive
-        url: https://github.com/ja2-stracciatella/ja2-stracciatella/archive/refs/tags/v0.21.0.tar.gz
-        sha256: "1c15b4f281bba9aff1c3409d4308d22840eb815a8a3ab53f7be69a5841f300a2"
+      - type: git
+        url: https://github.com/ja2-stracciatella/ja2-stracciatella.git
+        tag: "v0.22.0"
+        commit: "b195e15ab9f1f5c8bc17d1e86965d2f66b6ecbb3"
       # Cargo sources, generated with
       #
-      #   python3 flatpak-cargo-generator.py ${JA2_CLONE}/rust/Cargo.lock -o cargo-sources.json
+      #   flatpak run --command=flatpak-cargo-generator org.flatpak.Builder ${JA2_CLONE}/rust/Cargo.lock -o cargo-sources.json
       #
       # See https://github.com/flatpak/flatpak-builder-tools/tree/master/cargo
       # for details.
@@ -119,9 +117,9 @@ modules:
       # Directly download required header-only or direct-include libraries.
       # Use exactly the same versions as used by JA2 upstream, in the CMake
       # getters.
-      - type: archive
-        url: "https://github.com/mackron/miniaudio/archive/4dfe7c4c31df46e78d9a1cc0d2d6f1aef5a5d58c.tar.gz"
-        sha256: "76c154a60e320ae2054ac0e93480f2dffc12a5129bdb2ed4a62e0cce8d345c36"
+      - type: git
+        url: "https://github.com/mackron/miniaudio.git"
+        commit: "4dfe7c4c31df46e78d9a1cc0d2d6f1aef5a5d58c"
         dest: "dependencies/lib-miniaudio/src"
       - type: file
         url: https://github.com/Neargye/magic_enum/releases/download/v0.8.2/magic_enum.hpp
