@@ -45,6 +45,9 @@ modules:
         url: "https://github.com/ThePhD/sol2.git"
         tag: v3.5.0
         commit: "9190880c593dfb018ccf5cc9729ab87739709862"
+      # Fix build with GCC 15, see https://github.com/ThePhD/sol2/pull/1676
+      - type: patch
+        path: pr-1676.patch
     cleanup: ["*"] # header-only library, we need not retain anything
   # FLTK needs glu for its wayland backend
   - shared-modules/glu/glu-9.json
