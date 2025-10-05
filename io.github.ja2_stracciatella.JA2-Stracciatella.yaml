@@ -105,8 +105,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/ja2-stracciatella/ja2-stracciatella.git
-        tag: "v0.22.0"
-        commit: "b195e15ab9f1f5c8bc17d1e86965d2f66b6ecbb3"
+        tag: "v0.22.1"
+        commit: "11e9430b67d788b73f7a57d22166e8b500c23dab"
       # Cargo sources, generated with
       #
       #   flatpak run --command=flatpak-cargo-generator org.flatpak.Builder ${JA2_CLONE}/rust/Cargo.lock -o cargo-sources.json
